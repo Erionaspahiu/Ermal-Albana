@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ermal &amp; Albana</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Ftesë dasme – Ermal &amp; Albana · 4 korrik · Tiranë">
+<meta name="description" content="Ftesë dasme – Ermal &amp; Albana · 4 korrik · Golden Imperial, Prishtinë">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Pinyon+Script&display=swap">
@@ -119,6 +119,9 @@ h2{font:400 clamp(40px,10vw,52px)/1.1 var(--f-script);margin:0 0 6px;color:var(-
 .dress-note{margin:8px auto 0;max-width:26em;color:var(--ink-soft)}
 .venue{font-size:25px;font-weight:500;margin:0}
 .addr{margin:2px 0 26px;color:var(--ink-soft)}
+.photo{margin:0 auto 26px;max-width:460px;padding:8px;background:var(--card);border:1px solid var(--gold-soft);box-shadow:0 18px 34px -24px rgba(80,62,50,.6)}
+.photo img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover}
+.credit{margin:22px 0 0;font-size:12px;letter-spacing:.04em;color:var(--ink-soft);opacity:.75}
 .actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
 
 .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:16px 30px 16px 34px;
@@ -162,6 +165,10 @@ footer{padding-block:60px 90px;text-align:center}
 @keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
 .music:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
 
+.roses{position:fixed;inset:0;z-index:35;pointer-events:none;overflow:hidden}
+.roses .fall{position:absolute;left:0;top:0;will-change:transform}
+.roses img{display:block;width:100%;height:100%;will-change:transform;backface-visibility:visible}
+
 @media (prefers-reduced-motion:reduce){.hint,.cue,.music.on i{animation:none}}
 </style>
 </head>
@@ -199,6 +206,8 @@ footer{padding-block:60px 90px;text-align:center}
   <div class="ep seal" id="seal"><div class="whole" id="sealW"></div><div class="half l" id="sealL"></div><div class="half r" id="sealR"></div></div>
   <p class="hint" id="hint">Prekni për të hapur ftesën</p>
 </div>
+
+<div class="roses" id="roses" aria-hidden="true" hidden></div>
 
 <button class="music" id="music" type="button" aria-label="Muzika" aria-pressed="false" hidden><i></i><i></i><i></i></button>
 
@@ -239,8 +248,9 @@ footer{padding-block:60px 90px;text-align:center}
       <svg class="orn" viewBox="0 0 140 24" aria-hidden="true"></svg>
       <h2 id="h-place">Vendndodhja</h2>
       <p class="sub">Ju presim me krahë hapur</p>
-      <p class="venue" id="venueName">Emri i Sallës</p>
-      <p class="addr" id="venueAddr">Tiranë</p>
+      <figure class="photo" id="venuePhoto"><img src="salla.jpg" alt="Salla e dasmës Golden Imperial" loading="lazy" width="1280" height="853"></figure>
+      <p class="venue" id="venueName">Golden Imperial</p>
+      <p class="addr" id="venueAddr">Rruga Kërcova, Prishtinë 10000</p>
       <div class="actions">
         <a class="btn" id="mapLink" href="#" target="_blank" rel="noopener">Udhëzimet</a>
         <a class="btn" id="calLink" href="#" target="_blank" rel="noopener">Shtoje në kalendar</a>
@@ -282,6 +292,7 @@ footer{padding-block:60px 90px;text-align:center}
     <svg class="orn" viewBox="0 0 140 24" aria-hidden="true"></svg>
     <p class="closing">Mezi presim t’ju shohim!</p>
     <p class="sign">Ermal &amp; Albana</p>
+    <p class="credit">Muzika: “Clair de lune” – Claude Debussy, në piano nga Laurens Goedhart</p>
   </footer>
 </main>
 
@@ -292,11 +303,12 @@ const CONFIG = {
   date: "2027-07-04",           // data e dasmës (VVVV-MM-DD)
   time: "19:00",                // ora e fillimit
   endTime: "23:59",
-  tzOffset: "+02:00",           // ora e Tiranës në verë
-  city: "Tiranë",
-  venue: "Emri i Sallës",
-  address: "Tiranë",
-  mapsQuery: "Tirana, Albania", // emri i sallës ose lidhja e plotë e Google Maps
+  tzOffset: "+02:00",           // ora e Prishtinës në verë
+  city: "Prishtinë",
+  venue: "Golden Imperial",
+  address: "Rruga Kërcova, Prishtinë 10000",
+  mapsQuery: "Golden Imperial, Rruga Kërcova, Prishtinë 10000, Kosovo", // emri i sallës ose lidhja e plotë e Google Maps
+  venuePhoto: "salla.jpg",      // foto e sallës; bosh = pa foto
   rsvpBy: "20 qershor 2027",
   whatsapp: "355690000000",     // numri pa + dhe pa hapësira
   dressCode: "Formal & elegant",
@@ -346,6 +358,7 @@ $("dress").textContent = CONFIG.dressCode;
 if (CONFIG.dressNote){ $("dressNote").textContent = CONFIG.dressNote; $("dressNote").hidden = false; }
 $("venueName").textContent = CONFIG.venue;
 $("venueAddr").textContent = CONFIG.address;
+if (CONFIG.venuePhoto) $("venuePhoto").querySelector("img").src = CONFIG.venuePhoto; else $("venuePhoto").hidden = true;
 $("rsvpBy").textContent = `Ju lutemi na njoftoni deri më ${CONFIG.rsvpBy}`;
 $("mapLink").href = /^https?:/.test(CONFIG.mapsQuery) ? CONFIG.mapsQuery
   : "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(CONFIG.mapsQuery);
@@ -353,7 +366,7 @@ const stamp = t => CONFIG.date.replace(/-/g,"") + "T" + t.replace(":","") + "00"
 $("calLink").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"
   + "&text=" + encodeURIComponent("Dasma e Ermalit dhe Albanës")
   + "&dates=" + stamp(CONFIG.time) + "/" + stamp(CONFIG.endTime)
-  + "&ctz=Europe/Tirane&location=" + encodeURIComponent([CONFIG.venue, CONFIG.address].filter(Boolean).join(", "));
+  + "&ctz=Europe/Belgrade&location=" + encodeURIComponent([CONFIG.venue, CONFIG.address].filter(Boolean).join(", "));
 
 const ORN = `<g fill="none" stroke="#a8916c" stroke-width=".8" stroke-linecap="round" opacity=".85"><path d="M8 12H58M82 12H132"/>`
   + [0,1,2].map(i => { const x = 60 - i*9; return `<path d="M${x} 12q-4-6-10-6.5q3 5.5 10 6.5ZM${x} 12q-4 6-10 6.5q3-5.5 10-6.5Z"/><path d="M${140-x} 12q4-6 10-6.5q-3 5.5-10 6.5ZM${140-x} 12q4 6 10 6.5q-3-5.5-10-6.5Z"/>`; }).join("")
@@ -576,12 +589,127 @@ addEventListener("resize", () => { if (!started) layout(); else sizeHero(); });
 /* ---------- Music ---------- */
 const mBtn = $("music");
 const audio = CONFIG.music ? new Audio(CONFIG.music) : null;
-if (audio){ audio.loop = true; audio.preload = "auto"; }
+if (audio){ audio.loop = true; audio.preload = "auto"; audio.volume = 0; }
+function fadeIn(){ if (!audio) return; let v = audio.volume; const t = setInterval(() => { v = Math.min(.55, v + .02); audio.volume = v; if (v >= .55) clearInterval(t); }, 120); }
 function setMusic(on){ mBtn.classList.toggle("on", on); mBtn.setAttribute("aria-pressed", String(on)); mBtn.setAttribute("aria-label", on ? "Ndal muzikën" : "Luaj muzikën"); }
 mBtn.addEventListener("click", () => {
   if (!audio) return;
-  if (audio.paused) audio.play().then(() => setMusic(true)).catch(() => {}); else { audio.pause(); setMusic(false); }
+  if (audio.paused) audio.play().then(() => { setMusic(true); fadeIn(); }).catch(() => {}); else { audio.pause(); setMusic(false); }
 });
+
+/* ---------- Falling white roses ---------- */
+/* Roses and loose petals are painted once on canvas (cupped, shaded, with veins and soft inner shadows), then tumble in 3D with sway and depth of field. */
+function petalPath(x, L, W, R){
+  const j = () => 1 + (R()-.5)*.12;
+  x.beginPath(); x.moveTo(0, 0);
+  x.bezierCurveTo(-W*.55*j(), -L*.18, -W*j(), -L*.62, -W*.62, -L*.95);
+  x.bezierCurveTo(-W*.3, -L*1.1*j(), -W*.08, -L*1.02, 0, -L*.98);
+  x.bezierCurveTo(W*.1, -L*1.05, W*.32*j(), -L*1.1, W*.6, -L*.96);
+  x.bezierCurveTo(W*j(), -L*.62, W*.55*j(), -L*.18, 0, 0);
+  x.closePath();
+}
+function shadePetal(x, L, W, R, base){
+  const g = x.createLinearGradient(0, 0, 0, -L);
+  g.addColorStop(0, base); g.addColorStop(.38, "#f3eee6"); g.addColorStop(.78, "#fdfcf9"); g.addColorStop(1, "#ffffff");
+  x.fillStyle = g; x.fill();
+  x.lineWidth = 1; x.strokeStyle = "rgba(170,152,134,.45)"; x.stroke();
+  x.save(); x.clip();
+  const cx = (R()-.5)*W*.5, cy = -L*(.45+R()*.15);
+  const cup = x.createRadialGradient(cx, cy, 0, cx, cy, W*.9);
+  cup.addColorStop(0, "rgba(255,255,255,0)"); cup.addColorStop(.7, "rgba(255,255,255,0)"); cup.addColorStop(1, "rgba(150,132,115,.16)");
+  x.fillStyle = cup; x.fillRect(-W*1.2, -L*1.2, W*2.4, L*1.3);
+  const hl = x.createRadialGradient(W*.35, -L*.75, 0, W*.35, -L*.75, W*.6);
+  hl.addColorStop(0, "rgba(255,255,255,.75)"); hl.addColorStop(1, "rgba(255,255,255,0)");
+  x.fillStyle = hl; x.fillRect(-W*1.2, -L*1.2, W*2.4, L*1.3);
+  x.strokeStyle = "rgba(185,170,150,.22)"; x.lineWidth = .7;
+  for (let v=-3; v<=3; v++){ x.beginPath(); x.moveTo(0, -L*.04); x.quadraticCurveTo(v*W*.12, -L*.5, v*W*.2 + (R()-.5)*3, -L*(.9 - Math.abs(v)*.05)); x.stroke(); }
+  x.restore();
+}
+function paintPetal(seed){
+  const R = rng(seed), S = 180, c = document.createElement("canvas"); c.width = c.height = S;
+  const x = c.getContext("2d"); x.translate(S/2, S*.84); x.rotate((R()-.5)*.3);
+  const L = S*.7, W = S*(.3 + R()*.08);
+  petalPath(x, L, W, rng(seed));
+  x.save(); x.shadowColor = "rgba(90,70,55,.22)"; x.shadowBlur = 6; x.shadowOffsetY = 2; x.fillStyle = "#fff"; x.fill(); x.restore();
+  shadePetal(x, L, W, R, "#e4e2cc");
+  // a curled-over rim along one side
+  x.save(); petalPath(x, L, W, rng(seed)); x.clip();
+  const side = R() < .5 ? -1 : 1, rim = x.createLinearGradient(side*W*.9, 0, side*W*.45, 0);
+  rim.addColorStop(0, "rgba(255,255,255,.9)"); rim.addColorStop(.35, "rgba(160,140,122,.18)"); rim.addColorStop(1, "rgba(255,255,255,0)");
+  x.fillStyle = rim; x.fillRect(-W*1.2, -L*1.2, W*2.4, L*1.3); x.restore();
+  return c.toDataURL();
+}
+function paintRose(seed){
+  const R = rng(seed), S = 300, c = document.createElement("canvas"); c.width = c.height = S;
+  const x = c.getContext("2d"), Rad = S*.44;
+  x.translate(S/2, S/2); x.scale(1, .9 + R()*.1);
+  const layers = [[6,1,.78],[6,.84,.74],[5,.68,.7],[5,.53,.66],[4,.4,.62],[4,.29,.6]];
+  let off = R()*6;
+  layers.forEach(([n, l, w], li) => {
+    off += 2.4 + R()*.4;
+    for (let k=0;k<n;k++){
+      const a = off + k/n*Math.PI*2 + (R()-.5)*.25, L = Rad*l*(.93 + R()*.12), W = L*w;
+      x.save(); x.rotate(a);
+      petalPath(x, L, W, R);
+      x.save(); x.shadowColor = `rgba(80,60,45,${.18 + li*.05})`; x.shadowBlur = 8 + li*2; x.shadowOffsetY = 2; x.fillStyle = "#fff"; x.fill(); x.restore();
+      shadePetal(x, L, W, R, li < 2 ? "#d9d0c2" : "#cfc4b3");
+      // outer lip of the petal rolls back: bright band with a crease below it
+      x.save(); x.clip();
+      x.strokeStyle = "rgba(255,255,255,.95)"; x.lineWidth = L*.07;
+      x.beginPath(); x.ellipse(0, -L*.97, W*.62, L*.1, 0, Math.PI*.05, Math.PI*.95); x.stroke();
+      x.strokeStyle = "rgba(150,130,112,.25)"; x.lineWidth = 1.2;
+      x.beginPath(); x.ellipse(0, -L*.9, W*.6, L*.1, 0, Math.PI*.1, Math.PI*.9); x.stroke();
+      x.restore(); x.restore();
+    }
+  });
+  // tight bud in the middle: spiral folds with dark creases and lit edges
+  const bud = x.createRadialGradient(0, 0, 0, 0, 0, Rad*.2);
+  bud.addColorStop(0, "#b9ab98"); bud.addColorStop(.55, "#e9e2d7"); bud.addColorStop(1, "#faf7f2");
+  x.fillStyle = bud; x.beginPath(); x.arc(0, 0, Rad*.2, 0, Math.PI*2); x.fill();
+  x.lineCap = "round";
+  for (let i=0;i<6;i++){
+    const r = Rad*(.19 - i*.028), a0 = R()*6, a1 = a0 + 2.6 + R()*1.2;
+    x.strokeStyle = "rgba(120,100,82,.55)"; x.lineWidth = 1.6;
+    x.beginPath(); x.arc(0, 0, r, a0, a1); x.stroke();
+    x.strokeStyle = "rgba(255,255,255,.85)"; x.lineWidth = 1.1;
+    x.beginPath(); x.arc(-.8, -1.2, r + 1.4, a0 + .1, a1 - .2); x.stroke();
+  }
+  const v = x.createRadialGradient(0, 0, Rad*.2, 0, 0, Rad*1.1);
+  v.addColorStop(0, "rgba(255,255,255,0)"); v.addColorStop(1, "rgba(120,100,85,.1)");
+  x.globalCompositeOperation = "source-atop"; x.fillStyle = v; x.fillRect(-S, -S, S*2, S*2);
+  return c.toDataURL();
+}
+let FLOWERS;
+function roseFall(){
+  if (!window.gsap) return;
+  if (!FLOWERS) FLOWERS = { rose: [21,22,23].map(paintRose), petal: [31,32,33,34,35,36].map(paintPetal) };
+  const box = $("roses"), {vw, vh} = G, n = vw < 600 ? 32 : 50, pick = a => a[Math.floor(Math.random()*a.length)];
+  box.hidden = false;
+  let left = n;
+  for (let i=0;i<n;i++){
+    const rose = Math.random() < .3, depth = Math.random();             // 0 = far away, 1 = right in front of the lens
+    const sz = (rose ? 46 : 26) * (.55 + depth*.9) * Math.min(1.25, Math.max(.8, vw/700));
+    const outer = document.createElement("div"), img = new Image();
+    outer.className = "fall"; outer.style.width = outer.style.height = sz + "px";
+    const blurPx = depth < .18 ? 1.6 : depth > .92 ? 2.4 : 0;
+    outer.style.filter = `${blurPx ? `blur(${blurPx}px) ` : ""}drop-shadow(0 ${3+depth*6}px ${4+depth*6}px rgba(80,60,45,${.12+depth*.12}))`;
+    outer.style.opacity = depth < .18 ? .75 : 1;
+    img.src = pick(rose ? FLOWERS.rose : FLOWERS.petal); img.alt = "";
+    outer.appendChild(img); box.appendChild(outer);
+    // heavier roses fall straighter and faster; petals glide and flutter
+    const dur = (rose ? 4.6 : 6.8) * (1.25 - depth*.45) * (.85 + Math.random()*.3), delay = Math.random()*(rose ? 2.6 : 3.6);
+    const x0 = Math.random()*(vw + 60) - 30 - sz/2, drift = (Math.random()*2-1)*(rose ? 60 : 160);
+    gsap.set(outer, {x:x0, y:-sz - 30 - Math.random()*120});
+    gsap.set(img, {transformPerspective:500, rotation:Math.random()*360, rotationX:Math.random()*60-30, rotationY:Math.random()*60-30});
+    gsap.to(outer, {y:vh + sz + 40, duration:dur, delay, ease:"power1.in", onComplete(){ gsap.killTweensOf(img); outer.remove(); if (--left === 0) box.hidden = true; }});
+    gsap.to(outer, {x:x0 + drift, duration:dur, delay, ease:"sine.inOut"});
+    const sway = rose ? 10 + Math.random()*12 : 22 + Math.random()*30, per = rose ? 1.4 + Math.random() : .9 + Math.random()*.8;
+    gsap.to(img, {x:sway, duration:per, delay, repeat:-1, yoyo:true, ease:"sine.inOut"});
+    gsap.to(img, {rotation:`+=${(Math.random()<.5?-1:1)*(rose ? 90+Math.random()*120 : 200+Math.random()*300)}`, duration:dur, delay, ease:"none"});
+    if (rose) gsap.to(img, {rotationX:`+=${30+Math.random()*30}`, rotationY:`-=${20+Math.random()*30}`, duration:per*1.3, delay, repeat:-1, yoyo:true, ease:"sine.inOut"});
+    else gsap.to(img, {rotationX:`+=${(Math.random()<.5?-1:1)*360}`, rotationY:`+=${(Math.random()*2-1)*200}`, duration:per*2.2, delay, repeat:-1, ease:"none"});
+  }
+}
 
 /* ---------- Opening sequence ---------- */
 let started = false;
@@ -593,7 +721,7 @@ function open(){
   if (started) return; started = true;
   window.scrollTo(0,0);
   const hint = $("hint"); hint.style.opacity = getComputedStyle(hint).opacity; hint.style.animation = "none";
-  if (audio) audio.play().then(() => { mBtn.hidden = false; setMusic(true); }).catch(() => {});
+  if (audio) audio.play().then(() => { mBtn.hidden = false; setMusic(true); fadeIn(); }).catch(() => {});
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!window.gsap || reduce){
     stage.style.transition = "opacity .7s"; stage.style.opacity = "0";
@@ -610,6 +738,7 @@ function open(){
   gsap.set(flap, {transformPerspective: W*3.2, transformOrigin: "50% 0%"});
   gsap.set(fly, {transformOrigin: "50% 50%"});
   const tl = gsap.timeline({defaults:{ease:"power2.inOut"}, onComplete: finish});
+  tl.add(roseFall, .5);
   tl.to("#hint", {opacity:0, duration:.4, ease:"power1.out"}, 0)
     // seal lifts, cracks, falls away
     .to(seal, {scale:1.07, duration:.45, ease:"power1.out"}, 0)
